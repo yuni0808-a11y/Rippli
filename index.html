@@ -166,22 +166,30 @@ header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .cxpoly{fill:none;stroke:rgba(18,181,165,.55);stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
 .cxpoly.cxpolyok{stroke:rgba(32,189,141,.7)}
 .cxpoly.cxpolyno{stroke:rgba(255,107,107,.7)}
+.blpool{position:relative;flex:1;min-height:288px;width:100%;margin:4px 0;touch-action:manipulation}
+.blsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.blpoly{fill:none;stroke:rgba(18,181,165,.5);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.blbub{position:absolute;width:56px;height:56px;border-radius:50%;border:0;z-index:2;cursor:pointer;font-family:var(--ef);font-weight:700;font-size:24px;color:var(--teal-d);background:radial-gradient(circle at 34% 30%,#fff,#e9f7ff 72%);box-shadow:0 6px 14px -4px rgba(76,141,240,.4),inset 0 0 0 2px rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;animation:blbob 3s ease-in-out infinite;transition:transform .12s,background .2s,color .2s}
+@keyframes blbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.blbub.done{background:radial-gradient(circle at 34% 30%,#59e3d1,var(--teal) 76%);color:#fff;box-shadow:0 6px 16px -4px rgba(18,181,165,.5);animation:none}
+.blbub.bad{animation:blshake .4s;background:radial-gradient(circle at 34% 30%,#fff,#ffe3e3 72%);color:var(--coral)}
+@keyframes blshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
 .cxlive{stroke:rgba(18,181,165,.4);stroke-width:6;stroke-linecap:round}
 /* R3/B3 drag matching */
-.dmphotos{display:grid;gap:12px;max-width:520px;width:100%;margin:0 auto 18px}
-.dmphoto{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:1/1;background:#EAF4F1;border:2px solid transparent}
+.dmphotos{display:grid;gap:12px;max-width:520px;width:100%;margin:0 auto;flex:1 1 auto;min-height:0;grid-auto-rows:1fr}
+.dmphoto{position:relative;border-radius:16px;overflow:hidden;min-height:0;background:#EAF4F1;border:2px solid transparent}
 .dmphoto img{width:100%;height:100%;object-fit:cover;display:block}
 .dmphoto .dmko{position:absolute;bottom:6px;left:6px;right:6px;font-family:var(--kf);font-weight:700;font-size:14px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.65)}
 .dmphoto .dmlabel{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(32,189,141,.82);color:#fff;font-family:var(--ef);font-weight:700;font-size:20px}
 .dmphoto.done .dmlabel{display:flex}
 .dmphoto.over{border-color:var(--teal);box-shadow:0 0 0 4px rgba(18,181,165,.25)}
 .dmphoto.missflash{animation:nono .35s}
-.dmwords{display:flex;flex-wrap:nowrap;gap:8px;justify-content:center;align-items:stretch;max-width:680px;margin:0 auto}
+.dmwords{display:flex;flex-wrap:nowrap;gap:8px;justify-content:center;align-items:stretch;max-width:680px;margin:0 auto;flex:0 0 auto;padding-bottom:4px}
 .dmword{display:flex;align-items:center;justify-content:center;min-height:50px;box-sizing:border-box;font-family:var(--ef);font-weight:700;font-size:17px;padding:10px 14px;border-radius:14px;flex:0 1 auto;min-width:0;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.7);box-shadow:0 8px 22px -12px rgba(20,60,80,.4),inset 0 1px 0 rgba(255,255,255,.7);color:var(--ink);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;white-space:nowrap}
 .dmword.dragging{opacity:.3}
 .dmword.locked{opacity:.4;pointer-events:none;background:rgba(32,189,141,.2);border-color:rgba(32,189,141,.5)}
 .dmword.missflash{animation:nono .35s}
-.dmghost{position:fixed;z-index:9999;pointer-events:none;font-family:var(--ef);font-weight:700;font-size:20px;padding:12px 18px;border-radius:14px;background:#fff;box-shadow:0 12px 28px -8px rgba(20,60,80,.5);color:var(--ink)}
+.dmghost{position:fixed;z-index:9999;pointer-events:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;min-height:50px;font-family:var(--ef);font-weight:700;font-size:17px;padding:10px 14px;border-radius:14px;background:#fff;box-shadow:0 12px 28px -8px rgba(20,60,80,.5);color:var(--ink);white-space:nowrap}
 
 .pv{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:auto 0}
 .pvc{background:#F7FCFB;border:1px solid var(--line);border-radius:20px;padding:12px 8px;text-align:center;animation:pop .5s both}
@@ -697,7 +705,7 @@ let soakPrev=0;
 const soakPct=()=>Math.min(100,Math.round(soakStep/Math.max(1,soakTotal)*100));
 const MINTGRAIN=['linear-gradient(135deg,#EAFBF4,#CFEFE2)','linear-gradient(135deg,#E9F4FE,#CFE6FB)','linear-gradient(135deg,#ECEFFF,#D5E0FC)','linear-gradient(135deg,#F2EBFF,#E0D3FB)','linear-gradient(135deg,#FDEBF5,#FAD4E9)','linear-gradient(135deg,#FFF1E3,#FCE0C2)'];
 const WCOLOR={'headache':'#FDECEC','stomachache':'#FFF3E0','runny nose':'#EAF4FB','fever':'#FDEAF0','medicine':'#EAF7F0','rest':'#F1EEFB'};
-const TYPES=['A1','A2','A3','B1','B2','B3','C1','C2','C3'];
+const TYPES=['A1','A2','A3','B1','B2','B3','B4','C1','C2','C3','C4'];
 const catOf=t=>t[0], rand=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
 
@@ -736,9 +744,9 @@ let main=[],inject=[],ptr=0,review=[],ptr2=0,reviewBuilt=false,phase='intro',sta
 const everWrong=new Set();
 let pendingSR=null;
 function setPendingSR(pool,wrongNos){wrongNos.forEach(n=>{const wd=byNo[n]||byNo[+n];if(wd){everWrong.add(wd.no);wd.wrong=true;}});const wp=pool.filter(o=>wrongNos.has(String(o.no)));const tgt=wp[0]||pool.find(o=>everWrong.has(o.no))||pool[Math.floor(Math.random()*pool.length)];pendingSR={no:tgt.no,wrong:wrongNos.has(String(tgt.no))||everWrong.has(tgt.no)};}
-const CATTYPES={A:['A1','A2','A3'],B:['B1','B2','B3'],C:['C1','C2','C3']};
-const TYPESBYCAT={A:['A1','A2','A3'],B:['B1','B2','B3'],C:['C1','C2','C3'],R:['R1','R2','R3']};
-const QFAM={A1:'tap',A2:'tap',A3:'listen',B1:'tap',B2:'tap',B3:'tap',C1:'spell',C2:'spell',C3:'drag',R1:'spell',R2:'match',R3:'drag'};
+const CATTYPES={A:['A1','A2','A3'],B:['B1','B2','B3','B4'],C:['C1','C2','C3','C4']};
+const TYPESBYCAT={A:['A1','A2','A3'],B:['B1','B2','B3','B4'],C:['C1','C2','C3','C4'],R:['R1','R2','R3']};
+const QFAM={A1:'tap',A2:'tap',A3:'listen',B1:'tap',B2:'tap',B3:'tap',B4:'ox',C1:'spell',C2:'spell',C3:'drag',C4:'link',R1:'spell',R2:'match',R3:'drag'};
 let lastQType='';
 function avoidRepeat(type){
   if(!lastQType)return type;
@@ -789,7 +797,7 @@ function reviewCats(w){const un=['A','B','C'].filter(c=>!w.cats.has(c));if(w.cat
 function rankReview(){return WORDS.filter(w=>w.introduced&&w.box!=='M').map(w=>({w,s:boxScore(w)})).sort((a,b)=>b.s-a.s).map(o=>o.w);}
 function injectFront(items){for(let k=items.length-1;k>=0;k--)inject.unshift(items[k]);}
 function buildSlotInject(target,cForce){const r=rankReview();const pick=r.slice(0,Math.min(target,r.length));const items=pick.map(w=>({kind:'QUIZ',no:w.no,type:pickUnused(w,reviewCats(w)),review:true}));const n=Math.min(cForce||0,items.length);for(let k=0;k<n;k++){const ct=cSlotQueue.length?cSlotQueue.shift():rand(CATTYPES.C);items[k].type=ct;}injectFront(items);}
-function buildMixedInject(){const cats=['A','B','C'];const r=rankReview();const pick=r.slice(0,Math.min(5,r.length));pick.forEach(w=>{w.rSeen=true;});const items=pick.map((w,i)=>({kind:'QUIZ',no:w.no,type:pickUnused(w,[cats[i%3]]),review:true,mixed:true}));if(WORDS.filter(x=>x.introduced).length>=3){const rt=shuffle(['R1','R2','R3']);for(let k=0;k<Math.min(3,items.length);k++)items[k].type=rt[k];}injectFront(items);}
+function buildMixedInject(){const cats=['B','C'];const r=rankReview();const pick=r.slice(0,Math.min(5,r.length));pick.forEach(w=>{w.rSeen=true;});const items=pick.map((w,i)=>({kind:'QUIZ',no:w.no,type:pickUnused(w,[cats[i%2]]),review:true,mixed:true}));if(WORDS.filter(x=>x.introduced).length>=3){const rt=shuffle(['R1','R2','R3']);for(let k=0;k<Math.min(3,items.length);k++)items[k].type=rt[k];}injectFront(items);}
 function backfillExposure(){const need=WORDS.filter(w=>w.introduced&&w.cats.size<2);if(!need.length)return false;injectFront(need.map(w=>({kind:'QUIZ',no:w.no,type:pickUnused(w,reviewCats(w)),review:true})));return true;}
 function advance(){
   if(inject.length)return play(inject.shift());
@@ -852,7 +860,7 @@ const wordsByBox=k=>WORDS.filter(w=>{const r=BOXSTATE.words[w.en];return r&&r.bo
 function showBoxWords(k,waitN){
   const meta={1:['#FF7EB6','필수 복습'],2:['#9A6CFF','스미는 중'],3:['#4C8DF0','거의 완성'],'M':['mint','마스터']}[k]||['#c9d6d2',''];
   const ws=wordsByBox(k);
-  const banner=waitN>0?`<div class="bxbanner">🔒 장기 기억을 위해 <b>미션을 ${waitN}번</b> 더 수행하면 복습할 수 있어요.</div>`:((k===2||k===3)&&ws.length?`<div class="bxbanner ok">✨ <b>다음 학습</b>에서 이 단어들을 복습할 수 있어요.</div>`:'');
+  const banner=(k===3&&ws.length)?`<div class="bxbanner ok">✨ <b>미션을 3번</b> 완료한 후에 복습할 수 있어요.</div>`:(waitN>0?`<div class="bxbanner">🔒 장기 기억을 위해 <b>미션을 ${waitN}번</b> 더 수행하면 복습할 수 있어요.</div>`:(k===2&&ws.length?`<div class="bxbanner ok">✨ <b>다음 학습</b>에서 이 단어들을 복습할 수 있어요.</div>`:''));
   const html=`<div class="card"><h3><span class="bxhdot" style="${meta[0]==='mint'?'background:linear-gradient(135deg,#3FE0CD,#20C2AE)':'background:'+meta[0]}"></span> ${meta[1]} <span style="color:var(--muted);font-weight:700">· ${ws.length}개</span><button class="close" id="bxClose">✕</button></h3>${banner}
     <div class="bxwords">${ws.length?ws.map(w=>`<div class="bxcard" data-en="${w.en}"><div class="bxcard-img"><img src="${IMG[w.en]}" alt="${w.ko}"></div><div class="bxcard-en eng">${w.en}</div><div class="bxcard-ko">${w.ko}</div></div>`).join(''):'<div class="bxempty">아직 이 상자에 담긴 단어가 없어요. 학습을 완료하면 채워져요!</div>'}</div></div>`;
   let m=document.getElementById('bxmodal');
@@ -945,12 +953,13 @@ function renderMission(){
   const st=homeStats();const learned=savedWords().length;const deco=loadDeco();
   const c1=wordsByBox(1).length,c2=wordsByBox(2).length,c3=wordsByBox(3).length,cm=wordsByBox('M').length;
   const learnedN=savedWords().length;
+  const _lvNow=levelInfo(totalXp).level;const _wordInLv=Math.max(0,Math.min(100,learned-(_lvNow-1)*100));
   const BM=[{k:1,cls:'b1',nm:'필수 복습',sub:'Box 1'},{k:2,cls:'b2',nm:'스미는 중',sub:'Box 2'},{k:3,cls:'b3',nm:'거의 완성',sub:'Box 3'},{k:'M',cls:'bm',nm:'마스터',sub:'Master'}];
   const cnt={1:c1,2:c2,3:c3,'M':cm};
   const boxCards=`<div class="bp-cards">${BM.map((b,i)=>{const card=`<div class="bcard ${b.cls}" data-k="${b.k}"><span class="bdot"></span><div class="bmeta"><div class="bnm">${b.nm}</div><div class="bsub eng">${b.sub}</div></div><div class="bcnt">${cnt[b.k]}</div></div>`;return card+(i<BM.length-1?'<div class="bp-arrow"></div>':'');}).join('')}</div>`;
   const reviewBtn=`<button class="bp-review${c1>0?'':' calm'}" id="btnReview">🔁 <span class="eng">Ripple Time</span>${c1>0?`<span class="rt-badge eng">${c1}</span>`:''}</button>`;
   const stats=[
-    {ic:'📖',lab:'누적 학습 단어',val:learned,unit:'개',note:'전체 500개 중'},
+    {ic:'📖',lab:'누적 학습 단어',val:learned,unit:'개',note:'전체 100개 중'},
     {ic:'🔁',lab:'복습 단어 횟수',val:st.reviews||0,unit:'회',note:'전체 기준'},
     {ic:'🎯',lab:'성취율',val:(st.reviews?Math.round((st.correctTotal||0)/st.reviews*100):0),unit:'%',note:'전체 기준'},
     {ic:'🔥',lab:'연속 학습일',val:st.streak||1,unit:'일',note:'세션 '+(BOXSTATE.session||1)}
@@ -958,7 +967,7 @@ function renderMission(){
   frame(`<div class="home">
     <div class="hgrid">
     <div class="hrail">
-      <div class="profcard" style="${deco.theme&&THEMES[deco.theme]?`background:${THEMES[deco.theme]}`:''}"><button class="profedit" id="btnDress" title="스토어">🪄</button><div class="prof-char"><img src="${USERCHAR}" alt="">${deco.acc?`<span class="prof-acc${deco.acc==='🕶️'?' eyes':''}">${deco.acc}</span>`:''}</div><div class="pname">리플리</div><div class="plv">Lv.${levelInfo(totalXp).level} · 🔥 ${st.streak||1}일 연속</div><div class="plvrow"><div class="plvbar"><i style="width:${levelInfo(totalXp).pct}%"></i></div><span class="plvx">${levelLabel(totalXp)}</span></div></div>
+      <div class="profcard" style="${deco.theme&&THEMES[deco.theme]?`background:${THEMES[deco.theme]}`:''}"><button class="profedit" id="btnDress" title="스토어">🪄</button><div class="prof-char"><img src="${USERCHAR}" alt="">${deco.acc?`<span class="prof-acc${deco.acc==='🕶️'?' eyes':''}">${deco.acc}</span>`:''}</div><div class="pname">리플리</div><div class="plv">Lv.${levelInfo(totalXp).level} · 🔥 ${st.streak||1}일 연속</div><div class="plvrow"><div class="plvbar"><i style="width:${_wordInLv}%"></i></div><span class="plvx">${_wordInLv}/100개</span></div></div>
       <div class="boxpanel"><div class="bp-title">📦 <span class="eng">My Word Box</span><button class="bp-info" id="bpInfo"><img src="${USERFACE}" class="bpi-face" alt=""><span class="bp-tip"><span>Box 1~3 단어를 Master로 모으고<br>코인을 받아봐! <span class="gcoin"></span></span></span></button></div>${boxCards}${reviewBtn}</div>
     </div>
     <div class="hright">
@@ -1037,8 +1046,8 @@ function renderSR(w,wrong,stored){
 }
 
 const QLABEL={A1:'Picture Choice (2 choices)',A2:'Picture Choice (4 choices)',A3:'Listen & Choose',B1:'Word Choice (2 choices)',B2:'Word Choice (4 choices)',B3:'Picture · Word O/X',C1:'Spelling · Assemble',C2:'Spelling · Fill blank',C3:'Spelling · Connect',R1:'Spelling · Typing',R2:'Word · Meaning Match',R3:'Word · Picture Match'};
-const QSUB={A1:'Click the correct picture',A2:'Click the correct picture',A3:'Listen and choose the picture',B1:'Choose the correct word',B2:'Choose the correct word',B3:'Does the word match the picture?',C1:'Fill in the missing letters',C2:'Arrange the syllables in order',C3:'Drag to connect the letters in order',R1:'Type the word',R2:'Match each word to its meaning',R3:'Match each word to its picture'};
-const QCAT={A1:{k:'picture'},A2:{k:'picture'},A3:{k:'listening'},B1:{k:'meaning'},B2:{k:'meaning'},B3:{k:'match'},C1:{k:'spelling'},C2:{k:'spelling'},C3:{k:'spelling'},R1:{k:'spelling'},R2:{k:'match'},R3:{k:'match'}};
+const QSUB={A1:'Click the correct picture',A2:'Click the correct picture',A3:'Listen and choose the picture',B1:'Choose the correct word',B2:'Choose the correct word',B3:'Does the word match the picture?',B4:'Does the word match the meaning?',C1:'Fill in the missing letters',C2:'Arrange the syllables in order',C3:'Drag to connect the letters in order',C4:'Tap the letters in order to spell the word',R1:'Type the word',R2:'Match each word to its meaning',R3:'Match each word to its picture'};
+const QCAT={A1:{k:'picture'},A2:{k:'picture'},A3:{k:'listening'},B1:{k:'meaning'},B2:{k:'meaning'},B3:{k:'match'},B4:{k:'meaning'},C1:{k:'spelling'},C2:{k:'spelling'},C3:{k:'spelling'},C4:{k:'spelling'},R1:{k:'spelling'},R2:{k:'match'},R3:{k:'match'}};
 const STEPS=[['picture','🖼️','Picture'],['spelling','🔤','Spelling'],['meaning','💡','Meaning'],['listening','🎧','Listening'],['match','🧩','Match']];
 const stepChips=a=>{const s=STEPS.find(x=>x[0]===a)||STEPS[0];return `<div class="qsteps"><span class="qstep on eng">${s[1]}<i>${s[2]}</i></span></div>`;};
 let combo=0,hintFn=null,coins=0;
@@ -1084,6 +1093,7 @@ function quizA(w,type,body,done){
 
 function quizB(w,type,body,done){
   if(type==='B3')return quizOX(w,body,done);
+  if(type==='B4')return quizMeaningOX(w,body,done);
   const four=type==='B2';const opts=shuffle([w,...distractors(w,four?3:1)]);
   body.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:22px"><img class="ill" src="${IMG[w.en]}" alt="${w.ko}" style="max-width:260px"><div class="opts wopts ${four?'four':'two'}" id="opts" style="max-width:640px;width:100%"></div></div>`;
   const box=document.getElementById('opts');
@@ -1113,6 +1123,7 @@ function quizC(w,type,body,done){
   const letters=w.en.replace(/ /g,'').split('');
   if(type==='C1'){let n=Math.max(1,Math.round(letters.length*.3));if(letters.length<=2)n=1;const idx=shuffle(letters.map((_,i)=>i)).slice(0,n);return quizAssemble(w,body,done,letters.map((c,i)=>({c,i,blank:idx.includes(i)})),true);}
   if(type==='C2')return quizScramble(w,body,done);
+  if(type==='C4')return quizBubbleLink(w,body,done);
   return quizConnect(w,body,done);
 }
 function quizAssemble(w,body,done,plan,keepFixed){
@@ -1174,6 +1185,42 @@ function quizOX(w,body,done){
   body.innerHTML=`<div class="qfull" style="align-items:center"><img class="ill" src="${IMG[w.en]}" alt="${w.ko}" style="max-width:220px"><div class="ko" style="margin:10px 0 4px">${w.ko}</div><div class="en eng" style="justify-content:center">${shown.en}</div><div class="opts" id="opts" style="grid-template-columns:1fr 1fr;max-width:320px;margin:18px auto 0;width:100%"></div></div>`;
   const box=document.getElementById('opts');
   [['O',true],['X',false]].forEach(([label,val])=>{const b=document.createElement('button');b.className='opt wordopt eng';b.textContent=label;b.onclick=()=>{const ok=(val===match);[...box.children].forEach(x=>x.disabled=true);b.classList.add(ok?'right':'wrong');playResult(ok);fx(ok);setTimeout(()=>done(ok),700);};box.appendChild(b);});
+}
+function quizMeaningOX(w,body,done){
+  const match=Math.random()<0.5;const shown=match?w:rand(distractors(w,1));
+  body.innerHTML=`<div class="qfull" style="align-items:center;justify-content:center"><div class="en eng" style="justify-content:center">${w.en}</div><div class="ko" style="margin-top:18px">${shown.ko}</div><div class="opts" id="opts" style="grid-template-columns:1fr 1fr;max-width:320px;margin:24px auto 0;width:100%"></div></div>`;
+  const box=document.getElementById('opts');
+  [['O',true],['X',false]].forEach(([label,val])=>{const b=document.createElement('button');b.className='opt wordopt eng';b.textContent=label;b.onclick=()=>{const ok=(val===match);[...box.children].forEach(x=>x.disabled=true);b.classList.add(ok?'right':'wrong');playResult(ok);fx(ok);setTimeout(()=>done(ok),700);};box.appendChild(b);});
+}
+function quizBubbleLink(w,body,done){
+  const answer=w.en.replace(/ /g,'').toLowerCase().split('');const N=answer.length;
+  body.innerHTML=`<div class="qfull">
+    <div class="chead"><img src="${IMG[w.en]}" alt="${w.ko}"><span class="ko">${w.ko}</span></div>
+    <div class="cxword" id="blword">${answer.map(()=>'<span class="cxch"></span>').join('')}</div>
+    <div class="blpool" id="blpool"><svg class="blsvg" id="blsvg"><polyline class="blpoly" points=""/></svg></div></div>`;
+  const pool=document.getElementById('blpool'),line=document.getElementById('blsvg').querySelector('polyline'),chSpans=[...document.getElementById('blword').children];
+  let step=0,doneFlag=false;const pts=[];
+  function tap(b){
+    if(doneFlag||b.classList.contains('done'))return;
+    if(b.dataset.ch===answer[step]){
+      b.classList.add('done');pts.push(b.dataset.cx+','+b.dataset.cy);line.setAttribute('points',pts.join(' '));
+      chSpans[step].textContent=answer[step];chSpans[step].classList.add('on');step++;sfxType();
+      if(step>=N){doneFlag=true;playResult(true);fx(true);setTimeout(()=>done(true),650);}
+    }else{b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),400);}
+  }
+  function place(){
+    const r=pool.getBoundingClientRect();const W=r.width||340,H=r.height||300,pad=38,rad=28;const placed=[];
+    answer.forEach((ch,idx)=>{
+      let x,y,tries=0;
+      do{x=pad+Math.random()*(W-2*pad);y=pad+Math.random()*(H-2*pad);tries++;}while(tries<90&&placed.some(p=>Math.hypot(p.x-x,p.y-y)<68));
+      placed.push({x,y});
+      const b=document.createElement('button');b.className='blbub';b.textContent=ch;
+      b.style.left=(x-rad)+'px';b.style.top=(y-rad)+'px';b.style.animationDelay=(idx*0.18)+'s';
+      b.dataset.ch=ch;b.dataset.cx=x;b.dataset.cy=y;b.onclick=()=>tap(b);
+      pool.appendChild(b);
+    });
+  }
+  requestAnimationFrame(place);
 }
 
 function quizConnect(w,body,done){
@@ -1276,7 +1323,7 @@ function startReviewInbox(){
   const q1=wordsByBox(1),q2=wordsByBox(2);
   if(!q1.length){toast('복습할 단어가 없어요. ✨');return;}
   inboxQ={q2};
-  buildInboxQuiz(q1,1,'INBOX_ASK');
+  buildInboxQuiz(q1,1,'INBOX_DONE');
 }
 function reviewDone(note){
   showBar=false;curN=0;
@@ -1313,7 +1360,7 @@ function renderEnd(){
   try{const learned=WORDS.filter(w=>BOXSTATE.words[w.en]).length;const prev=JSON.parse(localStorage.getItem('smigo_stats')||'{}');const prevTotalXp=prev.totalXp||0,newTotalXp=prevTotalXp+xp;endPrevXp=prevTotalXp;endNewXp=newTotalXp;const prevLevel=levelInfo(prevTotalXp).level,newLevel=levelInfo(newTotalXp).level;endLeveledUp=newLevel>prevLevel;let wk=prev.weekKey||weekKeyNow(),wXp=prev.weekXp||0;if(wk!==weekKeyNow()){wk=weekKeyNow();wXp=0;}wXp+=xp;totalXp=newTotalXp;weekXp=wXp;weekKey=wk;if(newLevel>prevLevel){coins+=50*(newLevel-prevLevel);setTimeout(()=>toast(`🎉 레벨 업! Lv.${newLevel} · 코인 +${50*(newLevel-prevLevel)}`),900);}localStorage.setItem('smigo_stats',JSON.stringify({session:BOXSTATE.session,todayXp:xp,todayCoin:10,totalCoin:coins,totalXp:newTotalXp,weekXp:wXp,weekKey:wk,learned,reviews:(prev.reviews||0)+stats.q,correctTotal:(prev.correctTotal||0)+stats.correct,streak:(prev.session===BOXSTATE.session-1?(prev.streak||1)+1:(prev.streak||1)),rewardReady:true}));}catch(_){}
   const acc=stats.q?Math.round(stats.correct/stats.q*100):0;
   const pr=rand(acc>=90?[['완벽해요! 🎉','오늘 배운 단어를 거의 다 기억했어요.'],['최고예요! ⭐','영어가 쑥쑥 늘고 있어요.']]:acc>=70?[['잘했어요! 👍','조금만 더 하면 완벽해요.'],['좋아요!','오늘도 한 걸음 성장했어요.']]:[['수고했어요!','복습하면 금방 익숙해질 거예요.'],['괜찮아요!','틀린 단어는 다시 보면 돼요.']]);
-  frame(`<div class="endwrap pop">
+  const pop=frame(`<div class="endwrap pop">
     <div class="ec-badge">🎉 <span class="ec-badge-tx">SET COMPLETE!</span></div>
     <div class="ec-rewards"><span class="rw xp">⚡ +<b data-count="${xp}">0</b> XP</span><span class="rw coin"><span class="gcoin"></span> +<b data-count="10">0</b> Coins</span></div>
     <div class="result-panel"><div class="result-inner">
@@ -1333,6 +1380,8 @@ function renderEnd(){
       <button class="eb ghost" id="ebRetry">🔄 Retry</button>
     </div>
   </div>`);
+  pop.style.overflowY='auto';pop.style.paddingBottom='6px';
+  const _ew=pop.querySelector('.endwrap');if(_ew){_ew.style.flex='0 0 auto';_ew.style.minHeight='100%';_ew.style.boxSizing='border-box';}
   confettiBurst();sparkles();
   document.querySelectorAll('.endwrap [data-count]').forEach(countUp);
   document.getElementById('ebHome').onclick=()=>location.reload();
