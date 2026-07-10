@@ -173,6 +173,7 @@ header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 @keyframes blbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .blbub.done{background:radial-gradient(circle at 34% 30%,#59e3d1,var(--teal) 76%);color:#fff;box-shadow:0 6px 16px -4px rgba(18,181,165,.5);animation:none}
 .blbub.bad{animation:blshake .4s;background:radial-gradient(circle at 34% 30%,#fff,#ffe3e3 72%);color:var(--coral)}
+.blbub.blnext{box-shadow:0 0 0 4px rgba(255,194,75,.85),0 6px 16px -4px rgba(76,141,240,.45);animation:cxpulse 1s ease-in-out infinite}
 @keyframes blshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
 .cxlive{stroke:rgba(18,181,165,.4);stroke-width:6;stroke-linecap:round}
 /* R3/B3 drag matching */
@@ -811,7 +812,7 @@ function setPhase(txt,cls){const p=document.getElementById('phase');p.textConten
 function updateTrack(){document.getElementById('track').innerHTML=WORDS.map(w=>`<div class="orb ${w.used.size>=3?'done':w.exp>0?'half':''}"><i></i></div>`).join('');}
 
 
-function onLogoClick(){if(typeof phase!=='undefined'&&phase==='end'){location.reload();return;}confirmExit();}
+function onLogoClick(){if(typeof phase!=='undefined'&&phase==='end'){goHome();return;}confirmExit();}
 function confirmExit(){
   let m=document.getElementById('exitmodal');
   if(!m){m=document.createElement('div');m.id='exitmodal';m.className='bxmodal';document.body.appendChild(m);}
@@ -1113,7 +1114,7 @@ function quizMatch(w,body,done){
     if(!sel){sel=el;el.classList.add('sel');return;}
     if(sel===el){sel=null;el.classList.remove('sel');return;}
     if(sel.parentElement===el.parentElement){sel.classList.remove('sel');sel=el;el.classList.add('sel');return;}
-    if(sel.dataset.no===el.dataset.no){sel.classList.remove('sel');sel.classList.add('matched');el.classList.add('matched');sel=null;matched++;playResult(true);if(matched===4){fx(!miss);setPendingSR(pool,wrongNos);setTimeout(()=>done(!miss),450);}}
+    if(sel.dataset.no===el.dataset.no){sel.classList.remove('sel');sel.classList.add('matched');el.classList.add('matched');sel=null;matched++;playResult(true);if(matched===4){fx(true);setPendingSR(pool,wrongNos);setTimeout(()=>done(true),450);}}
     else{miss=true;wrongNos.add(String(sel.dataset.no));wrongNos.add(String(el.dataset.no));playResult(false);const a=sel,b=el;a.classList.add('miss');b.classList.add('miss');setTimeout(()=>{a.classList.remove('miss','sel');b.classList.remove('miss');},350);sel=null;}
   }
   [...cl.children,...cr.children].forEach(el=>el.onclick=()=>tap(el));
@@ -1197,7 +1198,7 @@ function quizBubbleLink(w,body,done){
   body.innerHTML=`<div class="qfull">
     <div class="chead"><img src="${IMG[w.en]}" alt="${w.ko}"><span class="ko">${w.ko}</span></div>
     <div class="cxword" id="blword">${answer.map(()=>'<span class="cxch"></span>').join('')}</div>
-    <div class="blpool" id="blpool"><svg class="blsvg" id="blsvg"><polyline class="blpoly" points=""/></svg></div></div>`;
+    <div class="blpool" id="blpool"><svg class="blsvg" id="blsvg"><polyline class="blpoly" points=""/></svg></div><button class="cxhintbtn" id="blhint">💧 Hint</button></div>`;
   const pool=document.getElementById('blpool'),line=document.getElementById('blsvg').querySelector('polyline'),chSpans=[...document.getElementById('blword').children];
   let step=0,doneFlag=false;const pts=[];
   function tap(b){
@@ -1221,6 +1222,7 @@ function quizBubbleLink(w,body,done){
     });
   }
   requestAnimationFrame(place);
+  const _bh=document.getElementById('blhint');let _hn=3;if(_bh){_bh.textContent='💧 Hint (3)';_bh.onclick=()=>{if(doneFlag||_hn<=0)return;sfxClick();const nx=[...pool.querySelectorAll('.blbub')].find(b=>!b.classList.contains('done')&&b.dataset.ch===answer[step]);if(nx){nx.classList.add('blnext');setTimeout(()=>nx.classList.remove('blnext'),2500);_hn--;_bh.textContent='💧 Hint ('+_hn+')';if(_hn<=0)_bh.disabled=true;}};}
 }
 
 function quizConnect(w,body,done){
@@ -1276,7 +1278,7 @@ function quizDragMatch(w,body,done){
   function startDrag(card,e){if(card.classList.contains('locked'))return;e.preventDefault();if(drag)cleanupDrag();const r=card.getBoundingClientRect();const clone=card.cloneNode(true);clone.className='dmghost eng';clone.style.width=r.width+'px';document.body.appendChild(clone);drag={card,clone,dx:e.clientX-r.left,dy:e.clientY-r.top};card.classList.add('dragging');moveClone(e.clientX,e.clientY);document.addEventListener('pointermove',onMove);document.addEventListener('pointerup',onUp);document.addEventListener('pointercancel',onUp);}
   function onMove(e){if(!drag)return;e.preventDefault();moveClone(e.clientX,e.clientY);const p=photoUnder(e.clientX,e.clientY);[...pc.children].forEach(ph=>ph.classList.toggle('over',ph===p&&!ph.classList.contains('done')));}
   function onUp(e){if(!drag)return;const card=drag.card;const p=photoUnder(e.clientX,e.clientY);cleanupDrag();
-    if(p&&!p.classList.contains('done')&&p.dataset.no===card.dataset.no){p.classList.add('done');p.querySelector('.dmlabel').textContent=card.textContent;card.classList.add('locked');matched++;playResult(true);if(matched===n){fx(!miss);setPendingSR(pool,wrongNos);setTimeout(()=>done(!miss),550);}}
+    if(p&&!p.classList.contains('done')&&p.dataset.no===card.dataset.no){p.classList.add('done');p.querySelector('.dmlabel').textContent=card.textContent;card.classList.add('locked');matched++;playResult(true);if(matched===n){fx(true);setPendingSR(pool,wrongNos);setTimeout(()=>done(true),550);}}
     else if(p&&!p.classList.contains('done')){miss=true;wrongNos.add(String(card.dataset.no));wrongNos.add(String(p.dataset.no));playResult(false);p.classList.add('missflash');card.classList.add('missflash');setTimeout(()=>{p.classList.remove('missflash');card.classList.remove('missflash');},350);}}
   wc.querySelectorAll('.dmword').forEach(card=>{card.addEventListener('pointerdown',e=>startDrag(card,e));});
 }
@@ -1353,6 +1355,12 @@ function startFocusReview(){
   ptr=0;inject=[];stats={q:0,correct:0};barMax=0;combo=0;lastQType='';
   setPhase('필수 복습','rev');advance();
 }
+function goHome(){
+  phase='intro';showBar=false;xp=0;curN=0;barMax=0;combo=0;lastQType='';
+  main=[];inject=[];ptr=0;review=[];ptr2=0;reviewBuilt=false;stats={q:0,correct:0};
+  document.body.classList.remove('startbg');document.body.style.background='linear-gradient(160deg,var(--bg1),var(--bg2))';
+  loadBox();buildSkeleton();updateTrack();play({kind:'MISSION'});
+}
 function renderEnd(){
   phase='end';showBar=false;setPhase('마무리','');updateTrack();
   applyBoxUpdates();coins+=10;
@@ -1384,7 +1392,7 @@ function renderEnd(){
   const _ew=pop.querySelector('.endwrap');if(_ew){_ew.style.flex='0 0 auto';_ew.style.minHeight='100%';_ew.style.boxSizing='border-box';}
   confettiBurst();sparkles();
   document.querySelectorAll('.endwrap [data-count]').forEach(countUp);
-  document.getElementById('ebHome').onclick=()=>location.reload();
+  document.getElementById('ebHome').onclick=()=>goHome();
   document.getElementById('ebNext').onclick=()=>toast('준비 중입니다.');
   document.getElementById('ebRetry').onclick=startFocusReview;
 }
