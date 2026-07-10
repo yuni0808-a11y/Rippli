@@ -852,7 +852,7 @@ function play(step){
   if(step.kind==='MIXED_REVIEW'){setPhase('리뷰','rev');buildMixedInject();return advance();}
   if(step.kind==='FOCUS_END'){coins+=30;saveCoins();reviewDone('복습 완료! 🪙 +30');return;}
   if(step.kind==='INBOX_ASK'){askInboxNext();return;}
-  if(step.kind==='INBOX_DONE'){finishInbox();return;}
+  if(step.kind==='INBOX_DONE'){inboxContinue();return;}
   if(step.kind==='QUIZ'){const w=byNo[step.no];const type=avoidRepeat(step.type||pickFromCat(w,step.pickFrom));lastQType=type;return renderQuiz(w,type,step);}
 }
 
@@ -1307,6 +1307,7 @@ function onResult(w,type,correct,step){
   }
   updateTrack();
   if(nextQuiz)inject.unshift(nextQuiz);
+  if(step&&step.review&&step.boxrev&&!correct){inject.unshift({kind:'QUIZ',no:w.no,type:pickUnused(w,reviewCats(w)),review:true,boxrev:step.boxrev});}
   if(step&&step.mixed){let srNo=w.no,srWrong=!correct;if((type==='R2'||type==='R3')&&pendingSR){srNo=pendingSR.no;srWrong=pendingSR.wrong;}pendingSR=null;inject.unshift({kind:'SR',no:srNo,wrong:srWrong,stored:byNo[srNo].exp===2});}
   else if(type!=='R2'&&type!=='R3')inject.unshift({kind:'SR',no:w.no,wrong:!correct,stored:w.exp===2});
   advance();
@@ -1314,8 +1315,11 @@ function onResult(w,type,correct,step){
 
 function countUp(el){const t=+el.dataset.count,suf=el.dataset.suffix||'';el.textContent=t+suf;if(!window.requestAnimationFrame)return;const dur=900,t0=Date.now();(function step(){const p=Math.min(1,(Date.now()-t0)/dur);el.textContent=Math.round(t*p)+suf;if(p<1)requestAnimationFrame(step);})();}
 function confettiBurst(){const l=document.getElementById('fxlayer');if(!l)return;const cols=['#12B5A5','#FFC24B','#FF7B66','#7DD9C0','#3BA0E0'];for(let i=0;i<30;i++){const c=document.createElement('div');c.className='confetti';c.style.left=(30+Math.random()*40)+'%';c.style.top='22%';c.style.background=cols[i%cols.length];c.style.animationDelay=(Math.random()*.3)+'s';c.style.setProperty('--dx',(Math.random()*220-110)+'px');l.appendChild(c);setTimeout(()=>c.remove(),1700);}}
-let inboxQ=null;
+let inboxQ=null,inboxBox=1;
+const REVIEW_BATCH=5;
 function buildInboxQuiz(words,boxk,endKind){
+  inboxBox=boxk;
+  words=words.slice(0,REVIEW_BATCH);
   main=words.map(w=>({kind:'QUIZ',no:w.no,type:pickUnused(w,reviewCats(w)),review:true,boxrev:boxk}));
   main.push({kind:endKind});
   ptr=0;inject=[];stats={q:0,correct:0};barMax=0;combo=0;lastQType='';
@@ -1335,7 +1339,18 @@ function reviewDone(note){
   try{sfxDing();}catch(_){}
   setTimeout(()=>location.reload(),1900);
 }
-function finishInbox(){reviewDone('복습함이 깨끗해졌어요! ✨');}
+function inboxContinue(){
+  const rem=wordsByBox(inboxBox||1);
+  if(!rem.length){finishInbox();return;}
+  let m=document.getElementById('ibmodal');
+  if(!m){m=document.createElement('div');m.id='ibmodal';m.className='bxmodal';document.body.appendChild(m);}
+  m.innerHTML=`<div class="card rewardcard exitcard"><img src="${THINKCHAR}" class="exit-char" alt=""><div class="exit-title">복습을 이어서 할까요?</div><div class="exit-sub">남은 복습 단어 ${rem.length}개가 있어요.</div><div class="ask-btns"><button class="ask-no" id="ibLater">나중에</button><button class="ask-yes" id="ibMore">이어하기</button></div></div>`;
+  document.getElementById('ibLater').onclick=()=>{m.classList.remove('show');finishInbox();};
+  document.getElementById('ibMore').onclick=()=>{m.classList.remove('show');buildInboxQuiz(rem,inboxBox||1,'INBOX_DONE');};
+  m.onclick=e=>{if(e.target===m){m.classList.remove('show');finishInbox();}};
+  m.classList.add('show');
+}
+function finishInbox(){const rem=wordsByBox(1).length;reviewDone(rem>0?`아직 복습할 단어가 ${rem}개 남았어요.`:'복습함이 깨끗해졌어요! ✨');}
 function askInboxNext(){
   const q2=(inboxQ&&inboxQ.q2)||[];
   if(!q2.length){finishInbox();return;}
