@@ -818,7 +818,7 @@ function confirmExit(){
   if(!m){m=document.createElement('div');m.id='exitmodal';m.className='bxmodal';document.body.appendChild(m);}
   m.innerHTML=`<div class="card rewardcard exitcard"><img src="${THINKCHAR}" class="exit-char" alt=""><div class="exit-title">학습을 종료할거니?</div><div class="exit-sub">지금까지 학습한 내용은 저장되지 않아.</div><div class="ask-btns"><button class="ask-no" id="exStay">계속하기</button><button class="ask-yes" id="exGo">종료하기</button></div></div>`;
   document.getElementById('exStay').onclick=()=>m.classList.remove('show');
-  document.getElementById('exGo').onclick=()=>location.reload();
+  document.getElementById('exGo').onclick=()=>{m.classList.remove('show');goHome();};
   m.onclick=e=>{if(e.target===m)m.classList.remove('show');};
   m.classList.add('show');
 }
@@ -1337,7 +1337,7 @@ function reviewDone(note){
   frame(`<div class="cardc"><div class="savedmsg eng"><div class="sm-big">Ripple!</div><div class="sm-sub">Word Stored.</div></div>${note?`<div class="rvdone-note">${note}</div>`:''}</div>`);
   const sm=stage.querySelector('.savedmsg');if(sm)requestAnimationFrame(()=>sm.classList.add('show'));
   try{sfxDing();}catch(_){}
-  setTimeout(()=>location.reload(),1900);
+  setTimeout(()=>goHome(),1900);
 }
 function inboxContinue(){
   const rem=wordsByBox(inboxBox||1);
